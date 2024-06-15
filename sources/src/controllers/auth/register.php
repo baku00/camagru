@@ -11,7 +11,7 @@ function post()
 {
 	global $pdo;
 	$email = strtolower(substr(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL), 0, 255));
-	$username = strtolower(substr(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255));
+	$username = substr(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
 	$password = substr(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
 	$confirm_password = substr(filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
 	$_SESSION['errors'] = [];
@@ -52,7 +52,7 @@ function post()
 		'token_validation'=> $token,
 	]);
 
-	sendMail($email, 'Validation de votre compte', "Cliquez sur ce lien pour valider votre compte : <a href='http://localhost/account/validate?token=$token'>Valider</a>");
+	sendMail($email, 'Validation de votre compte', "Cliquez sur ce lien pour valider votre compte : <a href='" . $_ENV['BASE_URL'] . "/account/validate?token=$token'>Valider</a>");
 
 	$user = fetchUser($email) ?? fetchUser($username);
 

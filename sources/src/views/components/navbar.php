@@ -29,6 +29,9 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/session.php';
 					</li>
 					<li class="nav-item">
 						<form id="form-logout" action="/auth/logout" method="post" class="d-none">
+							<div class="d-none">
+								<input type="text" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+							</div>
 						</form>
 						<a class="nav-link text-light" href="#" onclick="event.preventDefault(); document.querySelector('#form-logout').submit();">Se déconnecter</a>
 					</li>

@@ -61,12 +61,29 @@ function post()
 		return;
 	}
 
+	
 	if (!empty($old_password) && !empty($password)) {
 		$user = updateWithPassword($username, $email, $password);
 	}
 	else {
 		$user = updateWithoutPassword($username, $email);
 	}
+
+	if ($_SESSION['user']['email'] !== $email) {
+		$token = bin2hex(random_bytes(32));
+		$stmt = $pdo->prepare('UPDATE users SET token_validation = :token_validation, validated_at = NULL WHERE id = :id');
+		$stmt->execute([
+			'token_validation'=> $token,
+			'id'=> $user['id'],
+		]);
+
+		sendMail($email, 'Validation de votre compte', "Cliquez sur ce lien pour valider votre compte : <a href='" . $_ENV['BASE_URL'] . "/account/validate?token=$token'>Valider</a>");
+		$_SESSION['user'] = fetchById($user["id"]);
+		unset($_SESSION['user']['password']);
+		header("Location: /account/validate");
+		exit();
+	}
+
 	$_SESSION['user'] = $user;
 	unset($_SESSION['user']['password']);
 	header('Location: /account');

@@ -34,6 +34,7 @@ $pdo->exec('CREATE TABLE IF NOT EXISTS users (
 	username VARCHAR(255) NOT NULL UNIQUE,
 	email VARCHAR(255) NOT NULL UNIQUE,
 	token_validation VARCHAR(255) NOT NULL UNIQUE,
+	token_reset_password VARCHAR(255) NULL,
 	validated_at TIMESTAMP DEFAULT NULL,
 	notify BOOLEAN DEFAULT TRUE,
 	password VARCHAR(255) NOT NULL

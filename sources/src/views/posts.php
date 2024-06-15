@@ -13,7 +13,7 @@
 		<div class="container pt-3">
 			<div id="posts">
 				<div class="card m-auto mb-3" style="width: 18rem;">
-					<img src="https://localhost/storage/<?= $post['path'] ?>.png" alt="">
+					<img src="<?= $_ENV['BASE_URL'] ?>/storage/<?= $post['path'] ?>.png" alt="">
 					<div class="card-body">
 						<p class="card-title">Autheur: <?= $post['username'] ?></p>
 						<p class="card-text"><small class="text-muted"><?= $post['created_at'] ?></small></p>
@@ -37,7 +37,10 @@
 							<label for="content" class="form-label">Commentaire</label>
 								<input type="text" class="form-control" id="content" name="content" data-comment-content>
 							</div>
-							<button type="button" data-button-comment class="btn btn-primary">Commenter</button>
+							<div class="d-none">
+								<input type="text" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+							</div>
+							<button type="submit" data-button-comment class="btn btn-primary">Commenter</button>
 						</form>
 					</div>
 				</div>
@@ -58,12 +61,12 @@
 			});
 			button.addEventListener('click', function() {
 				const content = document.querySelector('[data-comment-content]').value;
-				fetch(`https://localhost/comments`, {
+				fetch(`<?= $_ENV['BASE_URL'] ?>/comments`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded',
 					},
-					body: `content=${content}&postId=<?= $post['id'] ?>`,
+					body: `content=${content}&postId=<?= $post['id'] ?>&csrf=<?= $_SESSION['csrf'] ?>`,
 				})
 				.then(async (_) => {
 					const response = await _.json();

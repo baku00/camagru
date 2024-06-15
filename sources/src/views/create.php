@@ -18,6 +18,9 @@
 					<input type="file" id="select-picture" class="d-none">
 					<form id="upload-picture" class="d-none">
 						<input type="text" id="source-64">
+						<div class="d-none">
+							<input type="text" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+						</div>
 					</form>
 					<div class="d-flex">
 						<button class="btn btn-primary me-3" id="take-picture">Caméra</button>
@@ -31,6 +34,7 @@
 			async function uploadPicture() {
 				const formData = new URLSearchParams();
 				formData.append('source', document.getElementById('source-64').value);
+				formData.append('csrf', document.querySelector('[name="csrf"]').value);
 
 				const response = await fetch('/posts', {
 					method: 'POST',

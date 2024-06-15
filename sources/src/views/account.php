@@ -8,6 +8,9 @@
 		<div class="container pt-3">
 			<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/alert.php'; ?>
 			<form action="/account" method="post">
+				<div class="d-none">
+					<input type="text" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+				</div>
 				<div class="mb-3">
 					<label for="username" class="form-label">Nom d'utilisateur</label>
 					<input type="text" class="form-control" id="username" name="username" value="<?= $username ?? $_SESSION['user']['username'] ?>" required>
@@ -31,7 +34,11 @@
 				<button type="submit" class="btn btn-primary">Modifier</button>
 				<button type="button" id="remove-button" class="btn btn-danger">Supprimer</button>
 			</form>
-			<form id="remove-account" action="/account/delete" method="post"></form>
+			<form id="remove-account" action="/account/delete" method="post">
+				<div class="d-none">
+					<input type="text" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+				</div>
+			</form>
 		</div>
 		<script>
 			document.querySelector('.btn-danger').addEventListener('click', () => {

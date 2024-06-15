@@ -12,6 +12,9 @@
 		<div class="container pt-3">
 			<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/alert.php'; ?>
 			<form action="/auth/register" method="post">
+				<div class="d-none">
+					<input type="text" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+				</div>
 				<div class="mb-3">
 					<label for="username" class="form-label">Nom d'utilisateur</label>
 					<input type="text" class="form-control" id="username" name="username" value="<?= $username ?? '' ?>" required>

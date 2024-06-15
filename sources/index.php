@@ -15,5 +15,6 @@ if (!isset($url))
 	$url = 'home';
 
 require_once 'src/middleware/auth.php';
+require_once 'src/middleware/csrf.php';
 
 get_path($url, $_SERVER['REQUEST_METHOD']);
