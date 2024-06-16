@@ -31,6 +31,14 @@
 					<label for="confirm-password" class="form-label">Confirmation</label>
 					<input type="password" class="form-control" id="confirm-password" name="confirm_password"  value="<?= $confirm_password ?? '' ?>">
 				</div>
+				<div class="mb-3">
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" <?= $_SESSION['user']['notify'] ? 'checked' : '' ?> id="notify">
+						<label class="form-check-label" for="notify">
+							Notifications
+						</label>
+					</div>
+				</div>
 				<button type="submit" class="btn btn-primary">Modifier</button>
 				<button type="button" id="remove-button" class="btn btn-danger">Supprimer</button>
 			</form>
@@ -41,6 +49,19 @@
 			</form>
 		</div>
 		<script>
+			document.querySelector('#notify').addEventListener('change', async (e) => {
+				await fetch('/account/notify', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded',
+						},
+						body: `notify=${e.target.checked ? '1' : '0'}&csrf=<?= $_SESSION['csrf'] ?>`,
+					})
+					.then(async (_) => {
+						if (!(_.status >= 200 && _.status <= 299))
+							return alert('Une erreur est survenue');
+					});
+			})
 			document.querySelector('.btn-danger').addEventListener('click', () => {
 				if (confirm('Voulez-vous vraiment supprimer votre compte ?'))
 					document.getElementById('remove-account').submit();

@@ -115,8 +115,22 @@ function validateUser($token) {
 		return true;
 	} catch (\Throwable $th) {
 		echo $th->getMessage();
-		// return false;
-		die();
+		return false;
 	}
+}
 
+function notifyUser($notify, $userId) {
+	if (!in_array($notify, [0,1]))
+		send_http_error("La notification doit être 1 ou 0", 400);
+
+	$_SESSION['user']['notify'] = $notify;
+	global $pdo;
+	$stmt = $pdo->prepare('UPDATE users SET notify = :notify WHERE id = :id');
+	$stmt->execute([
+		'notify'=> $notify,
+		'id'=> $_SESSION['user']['id'],
+	]);
+	echo json_encode([
+		'notify' => $notify
+	]);
 }

@@ -1,6 +1,7 @@
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/models/posts.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/models/likes.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/models/comments.php';
 
 function get() {
@@ -12,6 +13,8 @@ function get() {
 		header('Location: /');
 		return;
 	}
+	$liked = userHasLikedPost($_SESSION['user']['id'], $postId);
+	$total_likes = fetchLikesByPostId($postId);
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/posts.php';
 }
 

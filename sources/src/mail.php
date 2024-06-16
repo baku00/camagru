@@ -22,7 +22,6 @@ try {
 
 function sendMail($to, $subject, $body)
 {
-	echo "Envoi d'un email à $to avec le sujet $subject et le corps $body";
 	global $mail;
 	try {
 		$mail->addAddress($to);

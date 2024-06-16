@@ -15,12 +15,20 @@ function get_path($url, $method)
 		$url = 'home';
 	}
 	if (!file_exists("src/controllers/$url.php")) {
-		return error404();
+		if ($method === 'post')
+			send_http_error('Page introuvable', 404);
+		else
+			return error404();
 	}
 
 	require_once "src/controllers/$url.php";
 	if (!function_exists($method))
-		error404();
+	{
+		if ($method === 'post')
+			send_http_error('Page introuvable', 404);
+		else
+			return error404();
+	}
 
 	$method();
 }

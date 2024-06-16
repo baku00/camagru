@@ -1,6 +1,8 @@
 <?php
 
-function fetchById($id)
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/models/posts.php';
+
+function fetchCommentById($id)
 {
 	global $pdo;
 	$stmt = $pdo->prepare('SELECT comments.*, users.username as author FROM comments JOIN users ON comments.author_id = users.id WHERE comments.id = :id');
@@ -35,5 +37,10 @@ function create_comment($content, $userId, $postId)
 		'post_id'=> $postId,
 		'content'=> $content,
 	]);
-	echo json_encode(fetchById($pdo->lastInsertId()));
+	$post = fetchPostById($postId);
+	$user = fetchById($post['user_id']);
+	$author = fetchById($userId);
+	if ($user['notify'])
+		sendMail($user['email'], "Nouveau commentaire", "Un nouveau commentaire a été posté sur votre post de la part de " . $author['username']);
+	echo json_encode(fetchCommentById($pdo->lastInsertId()));
 }

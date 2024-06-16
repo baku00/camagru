@@ -83,7 +83,6 @@ function post()
 		header("Location: /account/validate");
 		exit();
 	}
-
 	$_SESSION['user'] = $user;
 	unset($_SESSION['user']['password']);
 	header('Location: /account');
