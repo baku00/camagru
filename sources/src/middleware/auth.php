@@ -1,15 +1,23 @@
-<?php	
+<?php
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/src/models/user.php';
+
 $publicPages = [
 	'' => ['get'],
 	'favicon.ico' => ['get'],
 	'posts' => ['get'],
+	'picture' => ['get'],
 ];
 
 function checkPath($url, $method) {
+	global $pdo;
 	global $publicPages;
 
+	$user = isset($_SESSION['user']) && $_SESSION['user'] ? fetchById($_SESSION['user']['id']) : null;
+	$_SESSION['user'] = $user;
 	if (isset($publicPages[$url]) && in_array($method, $publicPages[$url]))
 		return;
+
 
 	if (!isset($_SESSION['user']) && !startsWith($url, 'auth/')) {
 		header('Location: /auth/login');

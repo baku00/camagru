@@ -13,7 +13,10 @@ function get() {
 		header('Location: /');
 		return;
 	}
-	$liked = userHasLikedPost($_SESSION['user']['id'], $postId);
+	$liked = false;
+	if (isset($_SESSION['user'])) {
+		$liked = userHasLikedPost($_SESSION['user']['id'], $postId);
+	}
 	$total_likes = fetchLikesByPostId($postId);
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/posts.php';
 }
