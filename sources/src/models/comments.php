@@ -40,7 +40,7 @@ function create_comment($content, $userId, $postId)
 	$post = fetchPostById($postId);
 	$user = fetchById($post['user_id']);
 	$author = fetchById($userId);
-	if ($user['notify'])
-		sendMail($user['email'], "Nouveau commentaire", "Un nouveau commentaire a été posté sur votre post de la part de " . $author['username']);
+	// if ($user['notify'])
+	// 	sendMail($user['email'], "Nouveau commentaire", "Un nouveau commentaire a été posté sur votre post de la part de " . $author['username']);
 	echo json_encode(fetchCommentById($pdo->lastInsertId()));
 }

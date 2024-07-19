@@ -2,22 +2,6 @@
 <html lang="en">
 	<head>
 		<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/head.php'; ?>
-		<style>
-			.screen {
-				position: relative;
-				text-align: center;
-			}
-			.screen > img {
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				z-index: 1;
-			}
-			.screen > img {
-				width: 150px;
-			}
-		</style>
 	</head>
 	<body>
 		<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/navbar.php'; ?>
@@ -27,11 +11,10 @@
 				<div class="card col-lg-9">
 					<div class="card-body">
 						<div class="screen">
-							<!-- <img src="https://10.0.0.3/storage/moustache" alt=""> -->
 							<canvas style="width:100%;background-color:black;"></canvas>
 						</div>
 						<video id="video" class="d-none"></video>
-						<button class="btn btn-primary me-3" id="take-picture">Prendre une capture</button>
+						<button class="btn btn-primary me-3" id="take-picture" disabled>Prendre une capture</button>
 						<button class="btn btn-primary me-3 d-none" id="back-webcam">Retour à la caméra</button>
 						<button class="btn btn-primary me-3 d-none" id="publish-picture">Publier</button>
 					</div>
@@ -52,7 +35,6 @@
 						</div>
 					</div>
 					<div id="pictures">
-						<img src="https://localhost/storage/moustache" alt="">
 					</div>
 				</div>
 			</div>
@@ -62,7 +44,40 @@
 		<script src="<?= $_ENV['BASE_URL'] ?>/assets/js/picture.js"></script>
 		<script>
 			let selectedPicture = '';
-			const pictures = [];
+			const pictures = [
+				{
+					link: "https://10.0.0.3/storage/moustache",
+					dimension: {
+						canvasWidth: 2.5,
+						canvasHeight: 2,
+						width: 156,
+						height: 130
+					}
+				},
+				{
+					link: "https://10.0.0.3/storage/couronne",
+					dimension: {
+						canvasWidth: 4,
+						canvasHeight: 5,
+						width: 300,
+						height: 216
+					}
+				}
+			];
+
+			pictures.forEach(picture => {
+				console.log(picture);
+				const img = document.createElement('img');
+				img.src = picture.link;
+				img.style.width = '100%';
+				img.style.cursor = 'pointer';
+				img.addEventListener('click', () => {
+					selectedPicture = picture;
+					document.querySelector('#superposition-image').value = picture.link.split('/').pop();
+					setSuperposition(picture);
+				});
+				document.querySelector('#pictures').appendChild(img);
+			})
 		</script>
 	</body>
 </html>

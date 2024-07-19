@@ -26,10 +26,11 @@ function get_all_posts($pageNumber) {
 	];
 }
 
-function create_post($source, $userId)
+function create_post($picture, $source, $userId)
 {
 	if (empty($source))
 		send_http_error('La source est vide', 400);
+
 	global $pdo;
 	$token = bin2hex(random_bytes(32));
 	$stmt = $pdo->prepare('INSERT INTO posts (user_id, path) VALUES (:user_id, :path)');

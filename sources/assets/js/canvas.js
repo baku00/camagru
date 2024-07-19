@@ -1,11 +1,23 @@
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
-const superposition = new Image();
-superposition.src = "https://10.0.0.3/storage/moustache";
+let superposition = {}
+let superpositionImage = new Image();
+let haveToMirror = true;
 
-function drawSuperposition(superposition_src) {
-	superposition.src = superposition_src;
-	context.drawImage(superposition, canvas.width / 3, canvas.height / 3, 150 * (window.screen.availWidth / 100), 150 * (window.screen.availHeight / 100));
+function setSuperposition(_) {
+	superposition = _;
+	superpositionImage.src = _.link;
+	const takePictureButton = document.getElementById('take-picture');
+	if (!!_.link)
+		takePictureButton.removeAttribute('disabled');
+	else
+		takePictureButton.setAttribute('disabled', true);
+}
+
+function drawSuperposition() {
+	if (!superposition.link)
+		return;
+	context.drawImage(superpositionImage, canvas.width / superposition.dimension.canvasWidth, canvas.height / superposition.dimension.canvasHeight, superposition.dimension.width, superposition.dimension.height);
 }
 
 function drawVideoFrame() {
@@ -13,16 +25,30 @@ function drawVideoFrame() {
 		return;
 	}
 	const picture = createImageForCanvas(video);
+	context.save();
+	context.translate(picture.width, 0);
+	context.scale(-1, 1);
 	context.drawImage(video, 0, 0, picture.width, picture.height);
+	context.restore();
 	document.getElementById('source-64').value = canvas.toDataURL();
-	drawSuperposition(superposition.src);
+	drawSuperposition();
 	requestAnimationFrame(drawVideoFrame);
 }
 
-function takePicture(video) {
-	const dataUrl = canvas.toDataURL();
-	pictures.push(dataUrl);
-	refreshPictures();
+function takePicture() {
+	const picture = createImageForCanvas(video);
+	const image = new Image();
+	image.src = picture.toDataURL();
+	displayPicture();
+	image.onload = function () {
+		context.save();
+		context.translate(picture.width, 0);
+		context.scale(-1, 1);
+		context.drawImage(video, 0, 0, picture.width, picture.height);
+		context.restore();
+		document.getElementById('source-64').value = canvas.toDataURL();
+		drawSuperposition();
+	}
 }
 
 function createImageForCanvas(video) {

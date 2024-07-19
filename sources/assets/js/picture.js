@@ -1,6 +1,7 @@
 async function uploadPicture() {
 	const formData = new URLSearchParams();
 	formData.append('source', document.getElementById('source-64').value);
+	formData.append('superposition-image', document.getElementById('superposition-image').value);
 	formData.append('csrf', document.querySelector('[name="csrf"]').value);
 
 	const response = await fetch('/posts', {
