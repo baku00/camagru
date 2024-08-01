@@ -23,28 +23,16 @@ function get() {
 
 function post() {
 	$authorized_pictures = [
-		'moustache' => [
-			'link' => $_ENV['BASE_URL'] . '/storage/moustache',
-			'canvasWidth' => 2.5,
-			'canvasHeight' => 2,
-			'width' => 156,
-			'height' => 130
-		],
-		'couronne' => [
-			'link' => $_ENV['BASE_URL'] . '/storage/couronne',
-			'canvasWidth' => 2.5,
-			'canvasHeight' => 2,
-			'width' => 156,
-			'height' => 130
-		],
+		'moustache' => $_ENV['BASE_URL'] . '/storage/moustache',
+		'couronne' => $_ENV['BASE_URL'] . '/storage/couronne'
 	];
 
 	$superposition_image = filter_input(INPUT_POST, 'superposition-image', FILTER_SANITIZE_SPECIAL_CHARS);
-	if (!isset($authorized_pictures[$superposition_image])) {
+	if (!empty($superposition_image) && isset($superposition_image) && !isset($authorized_pictures[$superposition_image])) {
 		send_http_error('Image non autorisée', 400);
 	}
 
-	$picture = $authorized_pictures[$superposition_image];
+	$picture = $superposition_image ? $authorized_pictures[$superposition_image] : '';
 
 	return create_post($picture, $_POST['source'] ?? '', $_SESSION['user']['id']);
 }

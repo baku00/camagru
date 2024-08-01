@@ -1,7 +1,29 @@
+function setSuperposition(_) {
+	document.getElementById('img-superposition-image').src = _;
+
+	const takePictureButton = document.getElementById('take-picture');
+	if (!!_)
+		takePictureButton.removeAttribute('disabled');
+	else
+		takePictureButton.setAttribute('disabled', true);
+}
+
+function takePicture() {
+	const picture = createImageForCanvas(camera.video);
+	setPicture(picture.toDataURL());
+	switchMode();
+}
+
+function setPicture(src) {
+	document.querySelector('#selected-picture').src = src;
+	document.querySelector('#source-64').value = src;
+}
+
+
 async function uploadPicture() {
 	const formData = new URLSearchParams();
 	formData.append('source', document.getElementById('source-64').value);
-	formData.append('superposition-image', document.getElementById('superposition-image').value);
+	formData.append('superposition-image', document.getElementById('img-superposition-image').src.split('/').pop());
 	formData.append('csrf', document.querySelector('[name="csrf"]').value);
 
 	const response = await fetch('/posts', {
@@ -23,55 +45,11 @@ async function uploadPicture() {
 		console.error(response);
 }
 
-function refreshPictures() {
-	const picturesDiv = document.getElementById('pictures');
-	picturesDiv.innerHTML = '';
-	pictures.forEach((picture) => {
-		const img = document.createElement('img');
-		img.src = picture;
-		img.style.width = '100%';
-		img.style.height = '100%';
-		img.style.cursor = 'pointer';
-		img.addEventListener('click', () => {
-			selectPicture(pictures.indexOf(picture));
-		});
-		picturesDiv.appendChild(img);
-	});
-}
-
-function selectPicture(index) {
-	selectedPicture = pictures[index];
-	document.getElementById('source-64').value = selectedPicture;
-	displayPicture();
-	const ctx = canvas.getContext("2d");
-	const image = new Image();
-	image.src = selectedPicture;
-	image.onload = function () {
-		canvas.width = this.width;
-		canvas.height = this.height;
-		ctx.drawImage(image, 0, 0, this.width, this.height);
-	};
-
-	canvas.src = selectedPicture;
-}
-
 const fileInput = document.querySelector('#select-picture');
 fileInput.addEventListener('change', async (event) => {
 	const f = event.target.files[0];
 	file = await convertImageToBase64(f);
-	const canvas = document.createElement("canvas");
-	const ctx = canvas.getContext("2d");
-	const image = new Image();
-	image.src = file;
-	image.onload = function () {
-		canvas.width = this.width;
-		canvas.height = this.height;
-		ctx.drawImage(image, 0, 0, this.width, this.height);
-		const dataUrl = canvas.toDataURL();
-		pictures.push(dataUrl);
-		refreshPictures();
-	};
-	canvas.src = file;
+	setPicture(file);
 });
 
 function convertImageToBase64(file) {
@@ -88,4 +66,19 @@ function convertImageToBase64(file) {
 
 		reader.readAsDataURL(file);
 	});
+}
+
+function createImageForCanvas(video) {
+	const picture = document.createElement('canvas');
+	const context = picture.getContext('2d');
+	picture.width = video.videoWidth;
+	picture.height = video.videoHeight;
+	const image = new Image();
+	image.src = picture.toDataURL();
+	image.onload = function () {
+		canvas.width = this.width;
+		canvas.height = this.height;
+	};
+	context.drawImage(video, 0, 0, picture.width, picture.height);
+	return picture;
 }

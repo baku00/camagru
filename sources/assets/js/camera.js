@@ -1,12 +1,13 @@
-const video = document.querySelector('video');
+const camera = {
+	video: document.querySelector('video'),
+	exist: navigator.mediaDevices,
+	is_visible: true,
+};
 
-navigator.mediaDevices.getUserMedia({ video: true, preferCurrentTab: false })
+camera.exist && navigator.mediaDevices.getUserMedia({ video: true, preferCurrentTab: false })
 .then((stream) => {
-	video.srcObject = stream;
-	video.play();
-	video.addEventListener('play', () => {
-		drawVideoFrame();
-	});
+	camera.video.srcObject = stream;
+	camera.video.play();
 })
 .catch((err) => {
 	console.error("Erreur lors de l'accès à la caméra : ", err);
@@ -25,35 +26,46 @@ document.getElementById('publish-picture').addEventListener('click', async () =>
 });
 
 function switchMode() {
-	const back_webcam = document.getElementById('back-webcam');
-
-	if (back_webcam.classList.contains('d-none')) {
+	if (!camera.is_visible) {
 		displayWebcam();
 	} else {
 		displayPicture();
 	}
+	camera.is_visible = !camera.is_visible;
 }
 
 function displayWebcam() {
-	const back_webcam = document.getElementById('back-webcam');
-	const take_picture = document.getElementById('take-picture');
-	const publish_picture = document.getElementById('publish-picture');
+	const webcam_mode_elements = document.querySelectorAll('[data-mode="webcam"]');
+	const view_picture_mode_elements = document.querySelectorAll('[data-mode="view-picture"]');
 
-	back_webcam.classList.add('d-none');
-	take_picture.classList.remove('d-none');
-	publish_picture.classList.add('d-none');
+	webcam_mode_elements.forEach(element => {
+		element.classList.remove('d-none');
+		element.classList.add('d-block');
+	})
 
-	video.play();
+	view_picture_mode_elements.forEach(element => {
+		element.classList.add('d-none');
+		element.classList.remove('d-block');
+	})
+
+	if (camera.video)
+		camera.video.play();
 }
 
 function displayPicture() {
-	const back_webcam = document.getElementById('back-webcam');
-	const take_picture = document.getElementById('take-picture');
-	const publish_picture = document.getElementById('publish-picture');
+	const webcam_mode_elements = document.querySelectorAll('[data-mode="webcam"]');
+	const view_picture_mode_elements = document.querySelectorAll('[data-mode="view-picture"]');
 
-	back_webcam.classList.remove('d-none');
-	take_picture.classList.add('d-none');
-	publish_picture.classList.remove('d-none');
+	webcam_mode_elements.forEach(element => {
+		element.classList.add('d-none');
+		element.classList.remove('d-block');
+	})
 
-	video.pause();
+	view_picture_mode_elements.forEach(element => {
+		element.classList.remove('d-none');
+		element.classList.add('d-block');
+	})
+
+	if (camera.video)
+		camera.video.pause();
 }
