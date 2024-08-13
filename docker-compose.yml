@@ -17,6 +17,24 @@ services:
     security_opt:
       - "no-new-privileges:false"
 
+  apache:
+    build:
+      context: src/
+      dockerfile: Dockerfile
+    container_name: apache
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - database
+    networks:
+      - main
+    ports:
+      - "80:80"
+      - "443:443"
+    security_opt:
+      - "no-new-privileges:false"
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
