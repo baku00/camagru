@@ -6,7 +6,7 @@ function get() {
 	if ($_SESSION['user']['validated_at'] !== null)
 		header('Location: /');
 
-	$token = strtolower(substr(filter_input(INPUT_GET, 'token', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255));
+	$token = strtolower(substr(filter_input(INPUT_GET, 'token', FILTER_SANITIZE_SPECIAL_CHARS) ?? '', 0, 255));
 	if (!empty($token)) {
 		if (validateUser($token)) {
 			$_SESSION['user'] = fetchById($_SESSION['user']['id']);

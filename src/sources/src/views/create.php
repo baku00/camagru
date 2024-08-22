@@ -21,7 +21,6 @@
 				pointer-events: none;
 			}
 			.preview .superposition {
-				max-width: 150px;
 				width: auto;
 				max-height: 100%;
 				height: auto;
@@ -42,10 +41,10 @@
 				<div class="col-lg-9 col-12">
 					<div class="card">
 						<div class="card-body text-center">
-							<div data-mode="webcam">
+							<div data-mode="webcam" description="webcam">
 								<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/picture/mode/webcam.php'; ?>
 							</div>
-							<div data-mode="picture">
+							<div data-mode="picture" description="importation">
 								<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/picture/mode/import.php'; ?>
 							</div>
 						</div>
@@ -67,11 +66,11 @@
 		<script src="<?= $_ENV['BASE_URL'] ?>/assets/js/utils/picture.js?token<?= mt_rand() ?>" defer></script>
 		<script src="<?= $_ENV['BASE_URL'] ?>/assets/js/utils/pictures.js?token<?= mt_rand() ?>" defer></script>
 		<script>
+			let camera = null;
 			document.addEventListener('DOMContentLoaded', () => {
-				loadSuperposables();
-				new Ajaxify({
-					
-				})
+				camera = new Camera();
+				camera.init();
+				Superposable.getInstance().load();
 			});
 		</script>
 	</body>

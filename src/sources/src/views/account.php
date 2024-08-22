@@ -50,7 +50,7 @@
 		</div>
 		<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/script.php'; ?>
 		<script>
-			DOMContentLoaded(() => {
+			document.addEventListener('DOMContentLoaded', () => {
 				document.querySelector('#notify').addEventListener('change', async (e) => {
 					await fetch('/account/notify', {
 							method: 'POST',

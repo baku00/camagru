@@ -17,17 +17,20 @@ class Picture {
 }
 
 function takePicture() {
+	console.log('TAKE PICTURE');
+	
 	const pictureManager = PictureManager.getInstance();
-	const picture = createImageForCanvas(camera.video);
-	const dataURL = '';
-	setPicture(picture.toDataURL());
-	pictureManager.pictureTemplate(picture)
+	const picture = {
+		src: camera.getCurrentPicture(camera.video),
+		superposition: superposition.element.src
+	};
+	setPicture(picture.src);
+	pictureManager.addPicture(picture)
 	hideCamera();
 }
 
 function setPicture(src) {
 	document.querySelector('[data-picture="picture"]').src = src;
-	// document.querySelector('#selected-picture').src = src;
 	document.querySelector('#source-64').value = src;
 	document.querySelectorAll('[data-picture="publish"]').forEach(element => {
 		element.classList.remove('d-none');
@@ -39,8 +42,9 @@ function setPicture(src) {
 
 async function uploadPicture() {
 	const formData = new URLSearchParams();
-	formData.append('source', document.getElementById('source-64').value);
-	formData.append('superposition-image', superposition.element.src.split('/').pop());
+	const selector = camera.exist ? '[data-webcam-picture]' : '[data-picture="picture"]';
+	formData.append('source', document.querySelector(selector).src);
+	formData.append('superposition-image', Superposable.getInstance().getElement().src.split('/').pop());
 	formData.append('csrf', document.querySelector('[name="csrf"]').value);
 
 	const response = await fetch('/posts', {
@@ -65,7 +69,10 @@ async function uploadPicture() {
 async function changePicture(event) {
 	const f = event.target.files[0];
 	file = await convertImageToBase64(f);
-	setPicture(file);
+	const picture = await createImageForCanvas(file);
+	console.log(picture);
+	
+	setPicture(picture.toDataURL());
 }
 
 function convertImageToBase64(file) {
@@ -84,17 +91,29 @@ function convertImageToBase64(file) {
 	});
 }
 
-function createImageForCanvas(video) {
-	const picture = document.createElement('canvas');
-	const context = picture.getContext('2d');
-	picture.width = video.videoWidth;
-	picture.height = video.videoHeight;
-	const image = new Image();
-	image.src = picture.toDataURL();
-	image.onload = function () {
-		picture.width = this.width;
-		picture.height = this.height;
-	};
-	context.drawImage(video, 0, 0, picture.width, picture.height);
-	return picture;
+function createImageForCanvas(src) {
+	return new Promise((resolve, reject) => {
+		const picture = document.createElement('canvas');
+		const context = picture.getContext('2d');
+		picture.width = 400;
+		picture.height = 400;
+
+		if (src instanceof HTMLVideoElement) {
+			picture.width = src.videoWidth;
+			picture.height = src.videoHeight;
+			context.drawImage(src, 0, 0, picture.width, picture.height);
+			resolve(picture);
+		}
+		else {
+			const image = new Image();
+			image.onload = () => {
+				context.drawImage(image, 0, 0, picture.width, picture.height);
+				resolve(picture);
+			};
+			image.onerror = (error) => {
+				reject(new Error('Failed to load image'));
+			};
+			image.src = src;
+		}
+	});
 }

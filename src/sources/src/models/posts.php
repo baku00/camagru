@@ -40,35 +40,53 @@ function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, 
 	imagecopymerge($dst_im, $cut, $dst_x, $dst_y, 0, 0, $src_w, $src_h, $pct);
 }
 
-function create_post($superposable, $source, $userId)
-{
-	if (empty($source))
-		send_http_error('La source est vide', 400);
-
+function create_post($superposable, $source, $userId) {
 	$base64_data = substr($source, strpos($source, ',') + 1);
 	$image_binary = base64_decode($base64_data);
-	$img = imagecreatefromstring($image_binary);
-	$img_superposable = imagecreatefrompng($superposable);
+	$baseImage = imagecreatefromstring($image_binary);
 
-	$img_x = imagesx($img);
-	$img_y = imagesy($img);
-	$superposable_x = imagesx($img_superposable);
-	$superposable_y = imagesy($img_superposable);
-	$destination_x = ($img_x * 20 / 100);
-	$destination_y =  ($img_y * 10 / 100);
-	imagecopy($img, $img_superposable, $destination_x, $destination_y, 0, 0, imagesx($img_superposable), imagesy($img_superposable));
-	imagealphablending($img, false);
-	imagesavealpha($img, true);
-	$color = imagecolorallocatealpha($img, 0, 0, 0, 127);
-	imagefill($img, 0, 0, $color);
+    $baseWidth = imagesx($baseImage);
+    $baseHeight = imagesy($baseImage);
+    
+    $filterImage = imagecreatefrompng($superposable);
+    $filterWidth = imagesx($filterImage);
+    $filterHeight = imagesy($filterImage);
+
+    $filterAspectRatio = $filterWidth / $filterHeight;
+    $newFilterHeight = $baseHeight;
+    $newFilterWidth = round($newFilterHeight * $filterAspectRatio);
+
+    $resizedFilter = imagecreatetruecolor($newFilterWidth, $newFilterHeight);
+    imagealphablending($resizedFilter, false);
+    imagesavealpha($resizedFilter, true);
+    imagecopyresampled($resizedFilter, $filterImage, 0, 0, 0, 0, $newFilterWidth, $newFilterHeight, $filterWidth, $filterHeight);
+
+    $positionX = round(($baseWidth - $newFilterWidth) / 2);
+    $positionY = round(($baseHeight - $newFilterHeight) / 2);
+
+    imagesavealpha($baseImage, true);
+    imagecopy($baseImage, $resizedFilter, $positionX, $positionY, 0, 0, $newFilterWidth, $newFilterHeight);
+
 	$token = bin2hex(random_bytes(32));
+	
+	// header('Content-type: image/png');
+	imagepng($baseImage, $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $token . '.png');
+	// imagepng($baseImage);
+	// imagedestroy($baseImage);
+    // switch ($imageType) {
+    //     case "jpeg":
+    //         imagejpeg($baseImage, $imagePath);
+    //         break;
+    //     case "png":
+    //         imagepng($baseImage, $imagePath);
+    //         break;
+    // }
 
-	header('Content-type: image/png');
-	// imagepng($img, $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $token . '.png');
-	imagepng($img);
-	imagedestroy($img);
-	exit();
+    imagedestroy($baseImage);
+    imagedestroy($filterImage);
+    imagedestroy($resizedFilter);
 
+	// exit();
 	global $pdo;
 	$stmt = $pdo->prepare('INSERT INTO posts (user_id, path) VALUES (:user_id, :path)');
 	$stmt->execute([
@@ -78,6 +96,45 @@ function create_post($superposable, $source, $userId)
 	
 	echo json_encode(fetchPostById($pdo->lastInsertId()));
 }
+
+// function create_post($superposable, $source, $userId)
+// {
+// 	if (empty($source))
+// 		send_http_error('La source est vide', 400);
+
+// 	$base64_data = substr($source, strpos($source, ',') + 1);
+// 	$image_binary = base64_decode($base64_data);
+// 	$img = imagecreatefromstring($image_binary);
+// 	$img_superposable = imagecreatefrompng($superposable);
+
+// 	$img_x = imagesx($img);
+// 	$img_y = imagesy($img);
+// 	$superposable_x = imagesx($img_superposable);
+// 	$superposable_y = imagesy($img_superposable);
+// 	$destination_x = 125;
+// 	$destination_y =  135;
+// 	imagecopy($img, $img_superposable, $destination_x, $destination_y, 0, 0, imagesx($img_superposable), imagesy($img_superposable));
+// 	imagealphablending($img, false);
+// 	imagesavealpha($img, true);
+// 	$color = imagecolorallocatealpha($img, 0, 0, 0, 127);
+// 	imagefill($img, 0, 0, $color);
+// 	$token = bin2hex(random_bytes(32));
+	
+// 	header('Content-type: image/png');
+// 	// imagepng($img, $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $token . '.png');
+// 	imagepng($img);
+// 	imagedestroy($img);
+// 	exit();
+
+// 	global $pdo;
+// 	$stmt = $pdo->prepare('INSERT INTO posts (user_id, path) VALUES (:user_id, :path)');
+// 	$stmt->execute([
+// 		'user_id'=> $userId,
+// 		'path'=> $token,
+// 	]);
+	
+// 	echo json_encode(fetchPostById($pdo->lastInsertId()));
+// }
 
 function deletePost($postId) {
 	global $pdo;

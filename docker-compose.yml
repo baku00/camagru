@@ -34,6 +34,8 @@ services:
       - "443:443"
     security_opt:
       - "no-new-privileges:false"
+    volumes:
+      - sources:/var/www/html
 
   pgadmin:
     image: dpage/pgadmin4
@@ -58,5 +60,12 @@ volumes:
     driver: local
     driver_opts:
       device: ./database
+      type: volume
+      o: bind
+
+  sources:
+    driver: local
+    driver_opts:
+      device: ./src/sources
       type: volume
       o: bind

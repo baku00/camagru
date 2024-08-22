@@ -24,7 +24,9 @@ function get() {
 function post() {
 	$authorized_pictures = [
 		'moustache' => $_SERVER['DOCUMENT_ROOT'] . '/storage/moustache.png',
-		'couronne' => $_SERVER['DOCUMENT_ROOT'] . '/storage/couronne.png'
+		'chauve' => $_SERVER['DOCUMENT_ROOT'] . '/storage/chauve.png',
+		'chien' => $_SERVER['DOCUMENT_ROOT'] . '/storage/chien.png',
+		'anneau_fleur_bleu' => $_SERVER['DOCUMENT_ROOT'] . '/storage/anneau_fleur_bleu.png',
 	];
 
 	$superposition_image = filter_input(INPUT_POST, 'superposition-image', FILTER_SANITIZE_SPECIAL_CHARS);

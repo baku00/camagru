@@ -2,17 +2,13 @@ const prefix = {
 	event: 'on-',
 }
 
-function DOMContentLoaded(f) {
-	document.addEventListener('DOMContentLoaded', f);
-}
-
-DOMContentLoaded(() => {
+document.addEventListener('DOMContentLoaded', () => {
 	const eventElement = document.querySelectorAll('[data-event]');
 	eventElement.forEach(element => {
 		console.log(element);
 		registerEvents(element);
 	})
-})
+});
 
 function registerEvents(element) {
 	for (let i = 0; i < element.attributes.length; i++) {

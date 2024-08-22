@@ -10,7 +10,6 @@ function get() {
 function post() {
 	global $pdo;
 
-	var_dump($_POST);
 	$token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_SPECIAL_CHARS);
 	$username = substr(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
 	$password = substr(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);

@@ -12,13 +12,15 @@ class PictureManager {
 		return PictureManager.#instance;
 	}
 
-	takePicture() {
-		const canvas = createImageForCanvas(camera.video);
-		const dataURL = canvas.toDataURL();
-		const picture = new Picture(dataURL, superposition.element.src);
+	async takePicture() {
+		const dataURL = camera.getCurrentPicture();
+		console.log(camera.video);
+		console.log(dataURL);
+		const picture = new Picture(dataURL, Superposable.getInstance().getElement().src);
 		document.querySelector('[data-webcam-picture]').src = dataURL;
 		this.addPicture(picture);
-		hideCamera();
+		this.selectPicture(this.#pictures.length - 1);
+		camera.hide();
 	}
 
 	addPicture(picture) {
@@ -61,9 +63,10 @@ class PictureManager {
 	}
 
 	selectPicture(index) {
-		hideCamera();
 		const picture = this.#pictures[index];
-		setPicture(picture.src);
-		setSuperpositionImage(picture.superposition);
+		console.log(picture);
+		
+		document.querySelector('[data-webcam-picture]').src = picture.src;
+		Superposable.getInstance().select(picture.superposition);
 	}
 }

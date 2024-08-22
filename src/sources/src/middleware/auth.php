@@ -16,17 +16,16 @@ function checkPath($url, $method) {
 
 	$user = isset($_SESSION['user']) && $_SESSION['user'] ? fetchById($_SESSION['user']['id']) : null;
 	$_SESSION['user'] = $user;
-	if (isset($publicPages[$url]) && in_array($method, $publicPages[$url]))
-		return;
-
-
-	if (!isset($_SESSION['user']) && !startsWith($url, 'auth/')) {
-		header('Location: /auth/login');
+	if (isset($_SESSION['user']) && $_SESSION['user']['validated_at'] === null && !startsWith($url, 'account/validate') && !startsWith($url, 'auth/logout')) {
+		header('Location: /account/validate');
 		exit();
 	}
 
-	if (isset($_SESSION['user']) && $_SESSION['user']['validated_at'] === null && !startsWith($url, 'account/validate') && !startsWith($url, 'auth/logout') && !startsWith($url, 'auth/validate')) {
-		header('Location: /account/validate');
+	if (isset($publicPages[$url]) && in_array($method, $publicPages[$url]))
+		return;
+
+	if (!isset($_SESSION['user']) && !startsWith($url, 'auth/')) {
+		header('Location: /auth/login');
 		exit();
 	}
 
