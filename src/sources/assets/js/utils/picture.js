@@ -14,11 +14,26 @@ class Picture {
 	get superposition() {
 		return this.#superposition;
 	}
+
+	static getRatio(dimension = { width: 0, height: 0}) {
+		const ratio = { width: 0, height: 0 };
+		if (dimension.width > 400 && dimension.width > dimension.height) {
+			ratio.width = 400;
+			ratio.height = dimension.height * (400 / dimension.width);
+		}
+		else if (dimension.height > 400 && dimension.height > dimension.width) {
+			ratio.width = dimension.width * (400 / dimension.height);
+			ratio.height = 400;
+		}
+		else {
+			ratio.width = dimension.width;
+			ratio.height = dimension.height;
+		}
+		return ratio;
+	}
 }
 
 function takePicture() {
-	console.log('TAKE PICTURE');
-	
 	const pictureManager = PictureManager.getInstance();
 	const picture = {
 		src: camera.getCurrentPicture(camera.video),
@@ -91,36 +106,12 @@ function convertImageToBase64(file) {
 	});
 }
 
-function ratioImage(src) {
+function getDimension(src) {
 	return new Promise((resolve, reject) => {
 		const image = new Image();
 		image.src = src;
 		image.onload = function() {
-			console.table({
-				width: this.width,
-				height: this.height
-			});
-
-			const ratio = { width: 0, height: 0 };
-			if (this.width > 400 && this.width > this.height) {
-				ratio.width = 400;
-				ratio.height = this.height * (400 / this.width);
-			}
-			else if (this.height > 400 && this.height > this.width) {
-				ratio.width = this.width * (400 / this.height);
-				ratio.height = 400;
-			}
-			else {
-				ratio.width = this.width;
-				ratio.height = this.height;
-			}
-
-			console.log('ratio');
-			console.table({
-				width: ratio.width,
-				height: ratio.height
-			});
-			resolve(ratio);
+			resolve({ width: this.width, height: this.height });
 		}
 
 		image.onerror = (error) => {
@@ -133,9 +124,12 @@ function createImageForCanvas(src) {
 	return new Promise(async (resolve, reject) => {
 		const picture = document.createElement('canvas');
 		const context = picture.getContext('2d');
-		const ratio = src instanceof HTMLVideoElement ? camera.ratioVideo() : await ratioImage(src);
-		console.log(ratio);
-		
+
+		const dimensions = src instanceof HTMLVideoElement ?
+		{ width: camera.video.videoWidth, height: camera.video.videoHeight } :
+		await getDimension(src);
+
+		const ratio = Picture.getRatio(dimensions);
 		picture.width = ratio.width;
 		picture.height = ratio.height;
 

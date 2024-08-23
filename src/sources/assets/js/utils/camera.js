@@ -21,8 +21,10 @@ class Camera {
 	}
 
 	configureCanvas() {
-		const ratio = this.ratioVideo();
-		console.log(ratio);
+		const ratio = Picture.getRatio({
+			width: this.video.videoWidth,
+			height: this.video.videoHeight
+		});
 		
 		this.canvas.width = ratio.width;
 		this.canvas.height = ratio.height;
@@ -108,7 +110,10 @@ class Camera {
 	}
 
 	resizeVideo() {
-		const ratio = this.ratioVideo();
+		const ratio = Picture.getRatio({
+			width: this.video.videoWidth,
+			height: this.video.videoHeight
+		});
 		this.video.width = ratio.width;
 		this.video.height = ratio.height;
 	}
