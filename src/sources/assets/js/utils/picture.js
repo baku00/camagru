@@ -91,22 +91,63 @@ function convertImageToBase64(file) {
 	});
 }
 
-function createImageForCanvas(src) {
+function ratioImage(src) {
 	return new Promise((resolve, reject) => {
+		const image = new Image();
+		image.src = src;
+		image.onload = function() {
+			console.table({
+				width: this.width,
+				height: this.height
+			});
+
+			const ratio = { width: 0, height: 0 };
+			if (this.width > 400 && this.width > this.height) {
+				ratio.width = 400;
+				ratio.height = this.height * (400 / this.width);
+			}
+			else if (this.height > 400 && this.height > this.width) {
+				ratio.width = this.width * (400 / this.height);
+				ratio.height = 400;
+			}
+			else {
+				ratio.width = this.width;
+				ratio.height = this.height;
+			}
+
+			console.log('ratio');
+			console.table({
+				width: ratio.width,
+				height: ratio.height
+			});
+			resolve(ratio);
+		}
+
+		image.onerror = (error) => {
+			reject(error);
+		};
+	});
+}
+
+function createImageForCanvas(src) {
+	return new Promise(async (resolve, reject) => {
 		const picture = document.createElement('canvas');
 		const context = picture.getContext('2d');
-		picture.width = 400;
-		picture.height = 400;
+		const ratio = src instanceof HTMLVideoElement ? camera.ratioVideo() : await ratioImage(src);
+		console.log(ratio);
+		
+		picture.width = ratio.width;
+		picture.height = ratio.height;
 
 		if (src instanceof HTMLVideoElement) {
-			picture.width = src.videoWidth;
-			picture.height = src.videoHeight;
 			context.drawImage(src, 0, 0, picture.width, picture.height);
 			resolve(picture);
 		}
 		else {
 			const image = new Image();
 			image.onload = () => {
+				this.width = ratio.width;
+				this.height = ratio.height;
 				context.drawImage(image, 0, 0, picture.width, picture.height);
 				resolve(picture);
 			};
