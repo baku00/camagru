@@ -70,6 +70,16 @@ function refreshEmailValidationIfNeeded($user, $email) {
 		'id' => $user['id']
 	]);
 	$user['validated_at'] = NULL;
+	return $token;
+}
+
+function sendVerificationLink($user, $email) {
+	$token = refreshEmailValidationIfNeeded($user, $email);
+	sendMail($email, 'Validation de votre compte', "Cliquez sur ce lien pour valider votre compte : <a href='" . $_ENV['BASE_URL'] . "/account/validate?token=$token'>Valider</a>");
+}
+
+function isUserValidated($user) {
+	return $user && $user['validated_at'] !== null;
 }
 
 function updateWithPassword($username, $email, $password) {

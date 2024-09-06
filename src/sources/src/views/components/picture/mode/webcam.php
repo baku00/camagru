@@ -1,5 +1,5 @@
 <div class="preview">
-	<video id="video" class="picture"></video>
+	<video id="video" class="picture flipHorizontal"></video>
 	<img src="" alt="" class="picture" data-webcam-picture>
 	<img data-superposition="webcam" src="" alt="" class="superposition">
 	<canvas class="d-none" data-canvas-picture></canvas>

@@ -31,25 +31,23 @@ class Camera {
 	}
 
 	init() {
+		this.startPictureMode();
+		this.exist = false;
+
 		navigator.mediaDevices.getUserMedia({ video: true, preferCurrentTab: false })
 		.then((stream) => {
 			this.video.srcObject = stream;
 			this.startWebcamMode();
-			console.log(this.video.videoHeight);
 			this.exist = true;
 		})
 		.catch((err) => {
-			this.startPictureMode();
-			this.exist = false;
+			console.error(`Erreur lors de l'activation de la webcam: ${err}`);
 		});
 	}
 
 	startWebcamMode() {
 		Superposable.getInstance().setElement(document.querySelector(`[data-superposition="webcam"]`));
 		this.show();
-		// this.video.addEventListener('loadedmetadata', this.resizeVideo);
-		// document.querySelector('[data-mode="webcam"]').classList.add('d-block');
-		// document.querySelector('[data-mode="picture"]').classList.add('d-none');
 	}
 
 	startPictureMode() {

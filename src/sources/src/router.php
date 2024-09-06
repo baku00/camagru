@@ -10,15 +10,11 @@ function error404() {
 
 function get_path($url, $method)
 {
-	if (str_contains($url, 'assets'))
-	{
-		var_dump($url);
-		exit();
-	}
 	$url = secure_path($url);
 	if ($url == '') {
 		$url = 'home';
 	}
+
 	if (!file_exists("src/controllers/$url.php")) {
 		if ($method === 'post')
 			send_http_error('Page introuvable', 404);

@@ -82,12 +82,15 @@ async function uploadPicture() {
 }
 
 async function changePicture(event) {
-	const f = event.target.files[0];
-	file = await convertImageToBase64(f);
-	const picture = await createImageForCanvas(file);
-	console.log(picture);
-	
-	setPicture(picture.toDataURL());
+	try {
+		const f = event.target.files[0];
+		file = await convertImageToBase64(f);
+		const picture = await createImageForCanvas(file);
+		setPicture(picture.toDataURL());
+	} catch (error) {
+		alert(`Impossible de charger l'image (Info en console)`);
+		console.error(error);
+	}
 }
 
 function convertImageToBase64(file) {
@@ -125,9 +128,18 @@ function createImageForCanvas(src) {
 		const picture = document.createElement('canvas');
 		const context = picture.getContext('2d');
 
-		const dimensions = src instanceof HTMLVideoElement ?
-		{ width: camera.video.videoWidth, height: camera.video.videoHeight } :
-		await getDimension(src);
+		let dimensions = {};
+
+		if (src instanceof HTMLVideoElement)
+			dimensions = { width: camera.video.videoWidth, height: camera.video.videoHeight };
+		else
+		{
+			try {
+				dimensions = await getDimension(src);
+			} catch (error) {
+				reject(new Error('Failed to load image'));
+			}
+		}
 
 		const ratio = Picture.getRatio(dimensions);
 		picture.width = ratio.width;

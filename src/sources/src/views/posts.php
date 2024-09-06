@@ -1,7 +1,3 @@
-<?php
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -29,6 +25,7 @@
 					<div class="card m-auto mb-3" style="width: 18rem;">
 						<div class="card-body">
 							<p class="card-text"><?= htmlspecialchars($comment['content']); ?></p>
+							<p class="card-text"><small class="text-muted"><?= $comment['username'] ?></small></p>
 							<p class="card-text"><small class="text-muted"><?= $comment['created_at'] ?></small></p>
 						</div>
 					</div>
@@ -50,6 +47,7 @@
 					</div>
 				</div>
 			<?php endif; ?>
+		<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/script.php'; ?>
 		<script>
 			const heart = document.querySelector('#heart');
 			const likeCounter = document.querySelector('[data-total-like]');

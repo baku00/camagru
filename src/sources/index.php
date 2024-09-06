@@ -1,7 +1,11 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+set_error_handler(function($errno, $errstr) {
+	throw new ErrorException($errstr, 0, $errno);
+});
 $DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'];
+
 require_once 'vendor/autoload.php';
 require_once 'src/env.php';
 require_once 'src/postgres.php';

@@ -40,51 +40,57 @@ function imagecopymerge_alpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, 
 	imagecopymerge($dst_im, $cut, $dst_x, $dst_y, 0, 0, $src_w, $src_h, $pct);
 }
 
+function validateInputCreatePost($superposable, $source) {
+	return isset($superposable) && !empty($superposable) &&
+			isset($source) && !empty($source);
+}
+
 function create_post($superposable, $source, $userId) {
+	if(!validateInputCreatePost($superposable, $source))
+		send_http_error('Parametres manquants (Superposable, source)', 400);
+
 	$base64_data = substr($source, strpos($source, ',') + 1);
 	$image_binary = base64_decode($base64_data);
-	$baseImage = imagecreatefromstring($image_binary);
+	$baseImage = null;
+	try {
+		$baseImage = imagecreatefromstring($image_binary);
+	} catch (Exception $e) {
+		send_http_error('Image non valide', 400);
+	}
 
-    $baseWidth = imagesx($baseImage);
-    $baseHeight = imagesy($baseImage);
-    
-    $filterImage = imagecreatefrompng($superposable);
-    $filterWidth = imagesx($filterImage);
-    $filterHeight = imagesy($filterImage);
+	$baseWidth = imagesx($baseImage);
+	$baseHeight = imagesy($baseImage);
 
-    $filterAspectRatio = $filterWidth / $filterHeight;
-    $newFilterHeight = $baseHeight;
-    $newFilterWidth = round($newFilterHeight * $filterAspectRatio);
+	$filterImage = null;
+	try {
+		$filterImage = imagecreatefrompng($superposable);
+	} catch (Exception $e) {
+		send_http_error('Superposition non valide', 400);
+	}
+	$filterWidth = imagesx($filterImage);
+	$filterHeight = imagesy($filterImage);
 
-    $resizedFilter = imagecreatetruecolor($newFilterWidth, $newFilterHeight);
-    imagealphablending($resizedFilter, false);
-    imagesavealpha($resizedFilter, true);
-    imagecopyresampled($resizedFilter, $filterImage, 0, 0, 0, 0, $newFilterWidth, $newFilterHeight, $filterWidth, $filterHeight);
+	$filterAspectRatio = $filterWidth / $filterHeight;
+	$newFilterHeight = $baseHeight;
+	$newFilterWidth = round($newFilterHeight * $filterAspectRatio);
 
-    $positionX = round(($baseWidth - $newFilterWidth) / 2);
-    $positionY = round(($baseHeight - $newFilterHeight) / 2);
+	$resizedFilter = imagecreatetruecolor($newFilterWidth, $newFilterHeight);
+	imagealphablending($resizedFilter, false);
+	imagesavealpha($resizedFilter, true);
+	imagecopyresampled($resizedFilter, $filterImage, 0, 0, 0, 0, $newFilterWidth, $newFilterHeight, $filterWidth, $filterHeight);
 
-    imagesavealpha($baseImage, true);
-    imagecopy($baseImage, $resizedFilter, $positionX, $positionY, 0, 0, $newFilterWidth, $newFilterHeight);
+	$positionX = round(($baseWidth - $newFilterWidth) / 2);
+	$positionY = round(($baseHeight - $newFilterHeight) / 2);
+
+	imagesavealpha($baseImage, true);
+	imagecopy($baseImage, $resizedFilter, $positionX, $positionY, 0, 0, $newFilterWidth, $newFilterHeight);
 
 	$token = bin2hex(random_bytes(32));
-	
-	// header('Content-type: image/png');
-	imagepng($baseImage, $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $token . '.png');
-	// imagepng($baseImage);
-	// imagedestroy($baseImage);
-    // switch ($imageType) {
-    //     case "jpeg":
-    //         imagejpeg($baseImage, $imagePath);
-    //         break;
-    //     case "png":
-    //         imagepng($baseImage, $imagePath);
-    //         break;
-    // }
 
-    imagedestroy($baseImage);
-    imagedestroy($filterImage);
-    imagedestroy($resizedFilter);
+	imagepng($baseImage, $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $token . '.png');
+	imagedestroy($baseImage);
+	imagedestroy($filterImage);
+	imagedestroy($resizedFilter);
 
 	// exit();
 	global $pdo;
@@ -97,50 +103,12 @@ function create_post($superposable, $source, $userId) {
 	echo json_encode(fetchPostById($pdo->lastInsertId()));
 }
 
-// function create_post($superposable, $source, $userId)
-// {
-// 	if (empty($source))
-// 		send_http_error('La source est vide', 400);
-
-// 	$base64_data = substr($source, strpos($source, ',') + 1);
-// 	$image_binary = base64_decode($base64_data);
-// 	$img = imagecreatefromstring($image_binary);
-// 	$img_superposable = imagecreatefrompng($superposable);
-
-// 	$img_x = imagesx($img);
-// 	$img_y = imagesy($img);
-// 	$superposable_x = imagesx($img_superposable);
-// 	$superposable_y = imagesy($img_superposable);
-// 	$destination_x = 125;
-// 	$destination_y =  135;
-// 	imagecopy($img, $img_superposable, $destination_x, $destination_y, 0, 0, imagesx($img_superposable), imagesy($img_superposable));
-// 	imagealphablending($img, false);
-// 	imagesavealpha($img, true);
-// 	$color = imagecolorallocatealpha($img, 0, 0, 0, 127);
-// 	imagefill($img, 0, 0, $color);
-// 	$token = bin2hex(random_bytes(32));
-	
-// 	header('Content-type: image/png');
-// 	// imagepng($img, $_SERVER['DOCUMENT_ROOT'] . '/storage/' . $token . '.png');
-// 	imagepng($img);
-// 	imagedestroy($img);
-// 	exit();
-
-// 	global $pdo;
-// 	$stmt = $pdo->prepare('INSERT INTO posts (user_id, path) VALUES (:user_id, :path)');
-// 	$stmt->execute([
-// 		'user_id'=> $userId,
-// 		'path'=> $token,
-// 	]);
-	
-// 	echo json_encode(fetchPostById($pdo->lastInsertId()));
-// }
-
 function deletePost($postId) {
 	global $pdo;
 	$post = fetchPostById($postId);
 	if ($post['user_id'] !== $_SESSION['user']['id']) {
-		send_http_error("Vous n'êtes pas autorisé à supprimer ce post", 403);
+		// send_http_error("Vous n'êtes pas autorisé à supprimer ce post", 403);
+		return false;
 	}
 
 	$stmt = $pdo->prepare('DELETE FROM posts WHERE id = :id');

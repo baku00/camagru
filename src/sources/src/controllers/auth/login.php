@@ -34,5 +34,11 @@ function post()
 
 	$_SESSION['user'] = $user;
 	unset($_SESSION['user']['password']);
+
+	if ($_SESSION['user']['validated_at'] === null) {
+		sendVerificationLink($user, $user['email']);
+		header('Location: /account/validate');
+		return;
+	}
 	header('Location: /');
 }

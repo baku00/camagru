@@ -10,7 +10,7 @@ function post() {
 	$post = fetchPostById($postId);
 	$_SESSION['errors'] = [];
 	if (!$post) {
-		send_http_error('Post introuvable', 400);
+		send_http_error('Post introuvable', 404);
 	}
 	return create_comment($content ?? '', $_SESSION['user']['id'], $postId);
 }

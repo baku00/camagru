@@ -31,6 +31,11 @@
 				object-fit: cover;
 				pointer-events: none;
 			}
+
+			.flipHorizontal {
+				-webkit-transform: scaleX(-1);
+				transform: scaleX(-1);
+			}
 		</style>
 	</head>
 	<body>
