@@ -46,6 +46,10 @@ class Camera {
 	}
 
 	startWebcamMode() {
+		document.querySelector('[data-mode="webcam"]').classList.remove('d-none');
+		document.querySelector('[data-mode="webcam"]').classList.add('d-block');
+		document.querySelector('[data-mode="picture"]').classList.remove('d-block');
+		document.querySelector('[data-mode="picture"]').classList.add('d-none');
 		Superposable.getInstance().setElement(document.querySelector(`[data-superposition="webcam"]`));
 		this.show();
 	}
@@ -54,7 +58,9 @@ class Camera {
 		Superposable.getInstance().setElement(document.querySelector(`[data-superposition="picture"]`));
 		this.hide();
 		Superposable.getInstance().show();
+		document.querySelector('[data-mode="webcam"]').classList.remove('d-block');
 		document.querySelector('[data-mode="webcam"]').classList.add('d-none');
+		document.querySelector('[data-mode="picture"]').classList.remove('d-none');
 		document.querySelector('[data-mode="picture"]').classList.add('d-block');
 	}
 
