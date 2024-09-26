@@ -86,7 +86,13 @@ async function changePicture(event) {
 		const f = event.target.files[0];
 		file = await convertImageToBase64(f);
 		const picture = await createImageForCanvas(file);
-		setPicture(picture.toDataURL());
+		const dataUrl = picture.toDataURL();
+		setPicture(dataUrl);
+
+		const publishButtons = document.querySelectorAll('[data-picture="publish"]');
+		publishButtons.forEach(element => {
+			!Superposable.getInstance().sourceIsEmpty() && !!dataUrl ? element.removeAttribute('disabled') : element.setAttribute('disabled', true);
+		});
 	} catch (error) {
 		alert(`Impossible de charger l'image (Info en console)`);
 		console.error(error);

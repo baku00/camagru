@@ -30,17 +30,28 @@ class Superposable {
 		return this.#element;
 	}
 
+	sourceIsEmpty() {
+		return this.#element.getAttribute('src') === '';
+	}
+
 	select(src) {
+		const source = document.getElementById('source-64');
+		const takePictureButton = document.getElementById('take-picture');
+		const publishButtons = document.querySelectorAll('[data-picture="publish"]');
 		if (camera.exist)
 		{
-			const takePictureButton = document.getElementById('take-picture');
 			!!src ? takePictureButton.removeAttribute('disabled') : takePictureButton.setAttribute('disabled', true);
+			publishButtons.forEach(element => {
+				!!src ? element.removeAttribute('disabled') : element.setAttribute('disabled', true);
+			});
 		}
-		console.log('src', src);
 		
-		document.querySelectorAll('[data-picture="publish"]').forEach(element => {
-			!!src ? element.removeAttribute('disabled') : element.setAttribute('disabled', true);
-		});
+		else {
+			publishButtons.forEach(element => {
+				!!src && !!source.value ? element.removeAttribute('disabled') : element.setAttribute('disabled', true);
+			});
+		}
+
 		this.#element.src = src;
 	}
 

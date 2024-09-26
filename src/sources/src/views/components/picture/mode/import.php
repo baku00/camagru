@@ -1,6 +1,6 @@
 <div class="text-center">
-	<div class="preview">
-		<img data-picture="picture" src="" style="width: 286px;" alt="" class="picture flipHorizontal" />
+	<div class="preview m-auto">
+		<img data-picture="picture" src="/storage/appareil-photo.png" alt="" class="picture flipHorizontal" />
 		<img data-superposition="picture" src="" alt="" class="superposition" />
 	</div>
 	<div class="d-block">

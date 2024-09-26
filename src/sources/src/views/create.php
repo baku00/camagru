@@ -8,9 +8,7 @@
 			}
 			.preview {
 				position: relative;
-				max-width: 400px;
-				width: 100%;
-				max-height: 585px;
+				max-width: 325px;
 				max-height: 600px;
 			}
 			.preview .picture {
@@ -53,7 +51,7 @@
 								<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/picture/mode/import.php'; ?>
 							</div>
 						</div>
-						<div id="superposables" class="w-100 d-flex">
+						<div id="superposables" class="d-flex justify-content-center overflow-scroll">
 						</div>
 					</div>
 				</div>
@@ -71,6 +69,7 @@
 		<script src="<?= $_ENV['BASE_URL'] ?>/assets/js/utils/picture.js?token<?= mt_rand() ?>" defer></script>
 		<script src="<?= $_ENV['BASE_URL'] ?>/assets/js/utils/pictures.js?token<?= mt_rand() ?>" defer></script>
 		<script>
+			
 			let camera = null;
 			document.addEventListener('DOMContentLoaded', () => {
 				camera = new Camera();
