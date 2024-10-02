@@ -1,0 +1,71 @@
+services:
+  database:
+    image: postgres:15.4
+    container_name: database
+    environment:
+      - PGPORT=${POSTGRES_PORT}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - main
+    restart: always
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    security_opt:
+      - "no-new-privileges:false"
+
+  apache:
+    build:
+      context: src/
+      dockerfile: Dockerfile
+    container_name: apache
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - database
+    networks:
+      - main
+    ports:
+      - "80:80"
+      - "443:443"
+    security_opt:
+      - "no-new-privileges:false"
+    volumes:
+      - sources:/var/www/html
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    networks:
+      - main
+    restart: always
+    ports:
+      - 5050:80
+    security_opt:
+      - "no-new-privileges:false"
+
+networks:
+  main:
+    external: true
+
+volumes:
+  database:
+    driver: local
+#    driver_opts:
+#      device: ./database
+#      type: volume
+#      o: bind
+
+  sources:
+    driver: local
+#    driver_opts:
+#      device: ./src/sources
+#      type: volume
+#      o: bind

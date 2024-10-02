@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /
+
+# Règle pour ajouter .png à toutes les URL sous /storage
+RewriteCond %{REQUEST_URI} ^/storage
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !\.png$
+RewriteRule ^(storage/.+)$ /$1.png [L,QSA]
+
+# Règle générale
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)$ index.php?url=$1 [L,QSA]
