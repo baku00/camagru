@@ -10,8 +10,6 @@ class Camera {
 		this.context = this.canvas.getContext('2d');
 
 		this.video.addEventListener('loadedmetadata', () => {
-			console.log('loadedmetadata');
-			
 			this.resizeVideo();
 			this.configureCanvas();
 		});

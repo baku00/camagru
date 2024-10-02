@@ -5,7 +5,7 @@ function secure_path($url) {
 }
 
 function error404() {
-	echo "404";
+	require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/404.php';
 }
 
 function get_path($url, $method)

@@ -14,8 +14,6 @@ class PictureManager {
 
 	async takePicture() {
 		const dataURL = camera.getCurrentPicture();
-		console.log(camera.video);
-		console.log(dataURL);
 		const picture = new Picture(dataURL, Superposable.getInstance().getElement().src);
 		document.querySelector('[data-webcam-picture]').src = dataURL;
 		this.addPicture(picture);
@@ -64,7 +62,6 @@ class PictureManager {
 
 	selectPicture(index) {
 		const picture = this.#pictures[index];
-		console.log(picture);
 		
 		document.querySelector('[data-webcam-picture]').src = picture.src;
 		Superposable.getInstance().select(picture.superposition);

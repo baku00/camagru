@@ -5,7 +5,6 @@ const prefix = {
 document.addEventListener('DOMContentLoaded', () => {
 	const eventElement = document.querySelectorAll('[data-event]');
 	eventElement.forEach(element => {
-		console.log(element);
 		registerEvents(element);
 	})
 });

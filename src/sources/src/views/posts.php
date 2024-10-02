@@ -24,7 +24,7 @@
 				<?php foreach ($comments as $comment): ?>
 					<div class="card m-auto mb-3" style="width: 18rem;">
 						<div class="card-body">
-							<p class="card-text"><?= htmlspecialchars($comment['content']); ?></p>
+							<p class="card-text"><?= htmlspecialchars_decode(htmlspecialchars($comment['content']), ENT_QUOTES); ?></p>
 							<p class="card-text"><small class="text-muted"><?= $comment['username'] ?></small></p>
 							<p class="card-text"><small class="text-muted"><?= $comment['created_at'] ?></small></p>
 						</div>
