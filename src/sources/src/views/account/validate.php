@@ -15,4 +15,5 @@
 		</div>
 		<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/script.php'; ?>
 	</body>
+	<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/footer.php'; ?>
 </html>

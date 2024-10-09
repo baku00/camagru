@@ -35,16 +35,23 @@ function fetchUser($value)
 	return fetchByUsername($value);
 }
 
-function sendResetPasswordEmail($username) {
+function setTokenResetPassword($token, $username)
+{
 	global $pdo;
-	$token = bin2hex(random_bytes(32));
 	$stmt = $pdo->prepare('UPDATE users SET token_reset_password = :token_reset_password WHERE username = :username');
 	$stmt->execute([
-		'username'=> $username,
-		'token_reset_password'=> $token
+		'token_reset_password' => $token,
+		'username' => $username
 	]);
-	sendMail(fetchByUsername($username)['email'], 'Réinitialisation de votre mot de passe', 'Cliquez sur ce lien pour réinitialiser votre mot de passe : <a href="' . $_ENV['BASE_URL'] . '/auth/reset-password?token=' . $token . '">Réinitialiser</a>');
 	return $stmt->rowCount();
+}
+
+function sendResetPasswordEmail($username) {
+	global $pdo;
+	$token = generateToken();
+	$updated = setTokenResetPassword($token, $username);
+	sendMail(fetchByUsername($username)['email'], 'Réinitialisation de votre mot de passe', 'Cliquez sur ce lien pour réinitialiser votre mot de passe : <a href="' . $_ENV['BASE_URL'] . '/auth/reset-password?token=' . $token . '">Réinitialiser</a>');
+	return $updated;
 }
 
 function validatePasswordPolicy($password) {
@@ -59,22 +66,32 @@ function validateEmailPolicy($email) {
 	return !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
-function refreshEmailValidationIfNeeded($user, $email) {
-	global $pdo;
-
-	$token = bin2hex(random_bytes(32));
-	$stmt = $pdo->prepare('UPDATE users SET email = :email, token_validation = :token_validation, validated_at = NULL WHERE id = :id');
-	$stmt->execute([
-		'email' => $email,
-		'token_validation' => $token,
-		'id' => $user['id']
-	]);
-	$user['validated_at'] = NULL;
-	return $token;
+function generateToken() {
+	return bin2hex(random_bytes(32));
 }
 
+function getToken($username) {
+	global $pdo;
+	$stmt = $pdo->prepare('SELECT token_validation FROM users WHERE username = :username');
+	$stmt->execute(['username' => $username]);
+	return $stmt->fetch()['token_validation'];
+}
+
+function updateToken($token, $username) {
+	global $pdo;
+	$stmt = $pdo->prepare('UPDATE users SET token_validation = :token_validation WHERE username = :username');
+	$stmt->execute([
+		'token_validation' => $token,
+		'username' => $username
+	]);
+}
 function sendVerificationLink($user, $email) {
-	$token = refreshEmailValidationIfNeeded($user, $email);
+	$token = getToken($user['username']);
+	var_dump($token);
+	if (!$token) {
+		$token = generateToken();
+		updateToken($token, $user['username']);
+	}
 	sendMail($email, 'Validation de votre compte', "Cliquez sur ce lien pour valider votre compte : <a href='" . $_ENV['BASE_URL'] . "/account/validate?token=$token'>Valider</a>");
 }
 

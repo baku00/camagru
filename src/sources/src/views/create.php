@@ -9,7 +9,8 @@
 			.preview {
 				position: relative;
 				max-width: 325px;
-				max-height: 600px;
+				/* max-height: 600px; */
+				height: fit-content;
 			}
 			.preview .picture {
 				width: 100%;
@@ -38,30 +39,32 @@
 	</head>
 	<body>
 		<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/navbar.php'; ?>
-		<div class="container pt-3">
-			<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/alert.php'; ?>
-			<div class="row">
-				<div class="col-lg-9 col-12">
-					<div class="card">
-						<div class="card-body text-center">
-							<div data-mode="webcam" description="webcam">
-								<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/picture/mode/webcam.php'; ?>
+		<main>
+			<div class="container pt-3">
+				<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/alert.php'; ?>
+				<div class="row">
+					<div class="col-lg-9 col-12">
+						<div class="card">
+							<div class="card-body text-center">
+								<div data-mode="webcam" description="webcam">
+									<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/picture/mode/webcam.php'; ?>
+								</div>
+								<div data-mode="picture" description="importation">
+									<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/picture/mode/import.php'; ?>
+								</div>
 							</div>
-							<div data-mode="picture" description="importation">
-								<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/picture/mode/import.php'; ?>
+							<div id="superposables" class="d-flex justify-content-center overflow-scroll">
 							</div>
-						</div>
-						<div id="superposables" class="d-flex justify-content-center overflow-scroll">
 						</div>
 					</div>
-				</div>
-				<div class="col-lg-3 col-12 mt-3">
-					<div class="card">
-						<div id="pictures" class="card-body"></div>
+					<div class="col-lg-3 col-12 mt-3">
+						<div class="card">
+							<div id="pictures" class="card-body"></div>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</main>
 		<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/script.php'; ?>
 		<script src="<?= $_ENV['BASE_URL'] ?>/assets/js/utils/superposition.js?token<?= mt_rand() ?>" defer></script>
 		<script src="<?= $_ENV['BASE_URL'] ?>/assets/js/components/superposable.js?token<?= mt_rand() ?>" defer></script>
@@ -76,6 +79,7 @@
 				camera.init();
 				Superposable.getInstance().load();
 			});
-		</script>
+			</script>
 	</body>
+	<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/footer.php'; ?>
 </html>

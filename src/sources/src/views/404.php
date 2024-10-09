@@ -14,5 +14,6 @@
 			<h1>Page introuvable</h1>
 		</div>
 	</body>
+	<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/footer.php'; ?>
 	<?php require_once $_SERVER['DOCUMENT_ROOT'] . '/src/views/components/script.php'; ?>
 </html>
