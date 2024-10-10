@@ -51,8 +51,8 @@ function setPicture(src) {
 		element.classList.remove('d-none');
 		element.classList.add('d-block');
 	});
-	document.querySelector('[data-picture="select"]').classList.add('d-none');
-	document.querySelector('[data-picture="select"]').classList.remove('d-block');
+	// document.querySelector('[data-picture="select"]').classList.add('d-none');
+	// document.querySelector('[data-picture="select"]').classList.remove('d-block');
 }
 
 async function uploadPicture() {
