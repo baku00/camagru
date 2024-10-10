@@ -5,8 +5,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/src/models/comments.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/src/models/user.php';
 
 function post() {
-	$content = substr(filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
-	$postId = intval(filter_input(INPUT_POST, 'postId', FILTER_SANITIZE_NUMBER_INT));
+	$content = substr(filter_input(INPUT_POST, 'content', FILTER_SANITIZE_SPECIAL_CHARS) ?? '', 0, 255);
+	$postId = intval(filter_input(INPUT_POST, 'postId', FILTER_SANITIZE_NUMBER_INT) ?? '0');
 	$post = fetchPostById($postId);
 	$_SESSION['errors'] = [];
 	if (!$post) {

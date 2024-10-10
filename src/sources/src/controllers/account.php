@@ -10,11 +10,11 @@ function get()
 function post()
 {
 	global $pdo;
-	$username = strtolower(substr(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255));
-	$email = strtolower(substr(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL), 0, 255));
-	$old_password = substr(filter_input(INPUT_POST, 'old_password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
-	$password = substr(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
-	$confirm_password = substr(filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
+	$username = strtolower(substr(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS) ?? '', 0, 255));
+	$email = strtolower(substr(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL) ?? '', 0, 255));
+	$old_password = substr(filter_input(INPUT_POST, 'old_password', FILTER_SANITIZE_SPECIAL_CHARS) ?? '', 0, 255);
+	$password = substr(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS) ?? '', 0, 255);
+	$confirm_password = substr(filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_SPECIAL_CHARS) ?? '', 0, 255);
 
 	$_SESSION['errors'] = [];
 	$_SESSION['messages'] = [];
