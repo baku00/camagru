@@ -5,9 +5,7 @@ COPY ./virtual-host.conf /etc/apache2/sites-available/000-default.conf
 RUN mkdir -p /etc/ssl/certs/ /etc/ssl/private/
 
 RUN a2enmod ssl && a2enmod rewrite
-RUN service apache2 restart
 RUN apt install php libapache2-mod-php php-cli php-cgi php-pgsql php-gd -y
-RUN service apache2 stop; service apache2 start
 COPY ./configure.sh /configure.sh
 
 RUN apt-get update -y && apt-get upgrade -y

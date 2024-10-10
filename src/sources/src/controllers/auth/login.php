@@ -26,7 +26,7 @@ function post()
 	}
 
 	$user = fetchUser($username);
-	if (!$user || !password_verify($password . $_ENV['SALT_PASSWORD'], $user['password'])) {
+	if (!$user || !checkPassword($password, $user['password'])) {
 		$_SESSION['errors'][] = 'Email ou mot de passe incorrect';
 		header('Location: /auth/login');
 		return;

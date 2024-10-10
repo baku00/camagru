@@ -146,6 +146,10 @@ function validateUser($token) {
 	}
 }
 
+function checkPassword($password, $hash) {
+	return password_verify($password . $_ENV['SALT_PASSWORD'], $hash);
+}
+
 function notifyUser($notify, $userId) {
 	if (!in_array($notify, [0,1]))
 		send_http_error("La notification doit être 1 ou 0", 400);

@@ -15,6 +15,7 @@ function post()
 	$old_password = substr(filter_input(INPUT_POST, 'old_password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
 	$password = substr(filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
 	$confirm_password = substr(filter_input(INPUT_POST, 'confirm_password', FILTER_SANITIZE_SPECIAL_CHARS), 0, 255);
+
 	$_SESSION['errors'] = [];
 	$_SESSION['messages'] = [];
 
@@ -52,7 +53,7 @@ function post()
 
 	if (!empty($password))
 	{
-		if (empty($old_password) || !password_verify($old_password, $user['password']))
+		if (empty($old_password) || !!checkPassword($password, $user['password']))
 			$_SESSION['errors'][] = 'Mot de passe incorrect';
 	}
 
@@ -69,20 +70,20 @@ function post()
 		$user = updateWithoutPassword($username, $email);
 	}
 
-	if ($_SESSION['user']['email'] !== $email) {
-		$token = bin2hex(random_bytes(32));
-		$stmt = $pdo->prepare('UPDATE users SET token_validation = :token_validation, validated_at = NULL WHERE id = :id');
-		$stmt->execute([
-			'token_validation'=> $token,
-			'id'=> $user['id'],
-		]);
+	// if ($_SESSION['user']['email'] !== $email) {
+	// 	$token = bin2hex(random_bytes(32));
+	// 	$stmt = $pdo->prepare('UPDATE users SET token_validation = :token_validation, validated_at = NULL WHERE id = :id');
+	// 	$stmt->execute([
+	// 		'token_validation'=> $token,
+	// 		'id'=> $user['id'],
+	// 	]);
 
-		sendMail($email, 'Validation de votre compte', "Cliquez sur ce lien pour valider votre compte : <a href='" . $_ENV['BASE_URL'] . "/account/validate?token=$token'>Valider</a>");
-		$_SESSION['user'] = fetchById($user["id"]);
-		unset($_SESSION['user']['password']);
-		header("Location: /account/validate");
-		exit();
-	}
+	// 	sendMail($email, 'Validation de votre compte', "Cliquez sur ce lien pour valider votre compte : <a href='" . $_ENV['BASE_URL'] . "/account/validate?token=$token'>Valider</a>");
+	// 	$_SESSION['user'] = fetchById($user["id"]);
+	// 	unset($_SESSION['user']['password']);
+	// 	header("Location: /account/validate");
+	// 	exit();
+	// }
 	$_SESSION['user'] = $user;
 	unset($_SESSION['user']['password']);
 	header('Location: /account');

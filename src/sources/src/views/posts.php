@@ -182,10 +182,12 @@
 					<p class="card-text"><small class="text-muted" id="comment-${id}-date"></small></p>
 						</div>
 						`;
-						
-						document.querySelector('#comments').appendChild(card);
-						document.querySelector(`#comment-${id}-content`).innerText = content;
-						document.querySelector(`#comment-${id}-author`).innerText = author;
+
+					document.querySelector('#comments').appendChild(card);
+					document.querySelector(`#comment-${id}-content`).innerText = content;
+					const text = document.querySelector(`#comment-${id}-content`).innerText;
+					document.querySelector(`#comment-${id}-content`).innerHTML = text;
+					document.querySelector(`#comment-${id}-author`).innerText = author;
 					document.querySelector(`#comment-${id}-date`).innerText = created_at;
 				}
 			<?php endif; ?>
